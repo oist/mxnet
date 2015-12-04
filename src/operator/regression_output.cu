@@ -18,6 +18,8 @@ Operator *CreateRegressionOutputOp<gpu>(reg_enum::RegressionOutputType type, Reg
       return new RegressionOutputOp<gpu, mshadow_op::sigmoid, mshadow::op::minus>(param);
     case reg_enum::kMAE:
       return new RegressionOutputOp<gpu, mshadow::op::identity, mshadow_op::minus_sign>(param);
+    case reg_enum::kAngle:
+        return new RegressionOutputOp<gpu, mshadow_op::identity, mshadow_op::sin_minus>(param);
     default:
       LOG(FATAL) << "unknown activation type " << type;
   }
@@ -25,4 +27,3 @@ Operator *CreateRegressionOutputOp<gpu>(reg_enum::RegressionOutputType type, Reg
 }
 }  // namespace op
 }  // namespace mxnet
-

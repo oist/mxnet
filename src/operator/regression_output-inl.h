@@ -20,7 +20,7 @@ namespace op {
 namespace reg_enum {
 enum RegressionOutputOpInputs {kData, kLabel};
 enum RegressionOutputOutputs {kOut};
-enum RegressionOutputType {kLinear, kLogistic, kMAE};
+enum RegressionOutputType {kLinear, kLogistic, kMAE, kAngle};
 }  // reg_enum
 
 struct RegressionOutputParam : public dmlc::Parameter<RegressionOutputParam> {
@@ -140,6 +140,7 @@ class RegressionOutputProp : public OperatorProperty {
       case reg_enum::kLinear: return "LinearRegressionOutput";
       case reg_enum::kLogistic: return "LogisticRegressionOutput";
       case reg_enum::kMAE: return "MAERegressionOutput";
+      case reg_enum::kAngle: return "AngleRegressionOutput";
       default: LOG(FATAL) << "unknown type"; return "";
     }
   }

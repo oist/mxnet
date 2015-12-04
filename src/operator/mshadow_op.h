@@ -271,6 +271,12 @@ struct minus_sign {
   }
 };
 
+struct sin_minus {
+  MSHADOW_XINLINE static real_t Map(real_t a, real_t b) {
+    return sinf( a - b );
+  }
+};
+
 }  // namespace mshadow_op
 }  // namespace op
 }  // namespace mxnet

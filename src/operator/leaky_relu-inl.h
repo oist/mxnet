@@ -95,7 +95,8 @@ class LeakyReLUOp : public Operator {
     }
     switch (param_.act_type) {
       case leakyrelu::kLeakyReLU: {
-        Assign(out, req[leakyrelu::kOut], F<mshadow_op::xelu>(data, param_.slope));
+        const DType slope = DType(param_.slope);
+        Assign(out, req[leakyrelu::kOut], F<mshadow_op::xelu>(data, slope));
         break;
       }
       case leakyrelu::kPReLU: {
@@ -111,13 +112,14 @@ class LeakyReLUOp : public Operator {
           mask = mask * (param_.upper_bound - param_.lower_bound) + param_.lower_bound;
           Assign(out, req[leakyrelu::kOut], F<mshadow_op::xelu>(data, mask));
         } else {
-          const float slope = (param_.lower_bound + param_.upper_bound) / 2.0f;
+          const DType slope = DType((param_.lower_bound + param_.upper_bound) / 2.0f);
           Assign(out, req[leakyrelu::kOut], F<mshadow_op::xelu>(data, slope));
         }
         break;
       }
       case leakyrelu::kELU: {
-        Assign(out, req[leakyrelu::kOut], F<mshadow_op::elu>(data, param_.slope));
+        const DType slope = DType(param_.slope);
+        Assign(out, req[leakyrelu::kOut], F<mshadow_op::elu>(data, slope));
         break;
       }
       default:
@@ -171,7 +173,8 @@ class LeakyReLUOp : public Operator {
     }
     switch (param_.act_type) {
       case leakyrelu::kLeakyReLU: {
-        Assign(gdata, req[leakyrelu::kData], F<mshadow_op::xelu_grad>(output, param_.slope) * grad);
+        const DType slope = DType(param_.slope);
+        Assign(gdata, req[leakyrelu::kData], F<mshadow_op::xelu_grad>(output, slope) * grad);
         break;
       }
       case leakyrelu::kPReLU: {
@@ -186,7 +189,8 @@ class LeakyReLUOp : public Operator {
         break;
       }
       case leakyrelu::kELU: {
-        Assign(gdata, req[leakyrelu::kData], F<mshadow_op::elu_grad>(output, param_.slope) * grad);
+        const DType slope = DType(param_.slope);
+        Assign(gdata, req[leakyrelu::kData], F<mshadow_op::elu_grad>(output, slope) * grad);
         break;
       }
       default:

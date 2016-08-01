@@ -22,7 +22,7 @@ Operator *CreateOp<cpu>(UpSamplingParam param, int dtype) {
       int stride = param.scale;
       int pad = static_cast<int>(ceil((param.scale - 1) / 2.));
       p.workspace = param.workspace;
-      p.num_group = param.num_filter;
+      p.num_group = param.num_group;
       p.num_filter = param.num_filter;
       p.no_bias =  true;
       int shape[] = {1, 1};

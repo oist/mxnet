@@ -29,7 +29,8 @@ enum UpSamplingMultiInputMode {kConcat, kSum};
 
 struct UpSamplingParam : public dmlc::Parameter<UpSamplingParam> {
   index_t scale;
-  index_t num_filter;
+  uint32_t num_filter;
+  uint32_t num_group;
   int sample_type;
   int num_args;
   int multi_input_mode;
@@ -39,8 +40,13 @@ struct UpSamplingParam : public dmlc::Parameter<UpSamplingParam> {
     .set_range(1, 1000)
     .describe("Up sampling scale");
     DMLC_DECLARE_FIELD(num_filter)
-    .describe("Input filter. Only used by nearest sample_type.")
+    .describe("Number of input filters. Only used by bilinear upsampling."
+              "See Deconvolution operator.")
     .set_default(0);
+    DMLC_DECLARE_FIELD(num_group)
+    .describe("Number of group partitions. Only used by bilinear upsampling."
+              "See Deconvolution operator.")
+    .set_default(1);
     DMLC_DECLARE_FIELD(sample_type)
     .add_enum("nearest", up_enum::kNearest)
     .add_enum("bilinear", up_enum::kBilinear)

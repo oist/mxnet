@@ -16,6 +16,7 @@
 #include <string>
 #include <utility>
 #include "./operator_common.h"
+#include "./deconvolution-inl.h"
 
 namespace mxnet {
 namespace op {
@@ -30,8 +31,10 @@ enum UpSamplingMultiInputMode {kConcat, kSum};
 struct UpSamplingParam : public dmlc::Parameter<UpSamplingParam> {
   index_t scale;
   index_t num_filter;
+  index_t num_group;
   int sample_type;
   int num_args;
+  dmlc::optional<int> cudnn_tune;
   int multi_input_mode;
   uint64_t workspace;
   DMLC_DECLARE_PARAMETER(UpSamplingParam) {
@@ -41,6 +44,16 @@ struct UpSamplingParam : public dmlc::Parameter<UpSamplingParam> {
     DMLC_DECLARE_FIELD(num_filter)
     .describe("Input filter. Only used by bilinear sample_type.")
     .set_default(0);
+    DMLC_DECLARE_FIELD(num_group)
+    .describe("number of groups partition. Only used by bilinear sample_type.")
+    .set_default(1);
+    DMLC_DECLARE_FIELD(cudnn_tune)
+    .add_enum("off", deconv::kOff)
+    .add_enum("limited_workspace", deconv::kLimited)
+    .add_enum("fastest", deconv::kFastest)
+    .set_default(dmlc::optional<int>())
+    .describe("Whether to pick convolution algo by running performance test. "
+    "Only used by bilinear sample_type.");
     DMLC_DECLARE_FIELD(sample_type)
     .add_enum("nearest", up_enum::kNearest)
     .add_enum("bilinear", up_enum::kBilinear)
@@ -57,7 +70,7 @@ struct UpSamplingParam : public dmlc::Parameter<UpSamplingParam> {
     "upsampling, this can be 1-N; the size of output will be"
     "(scale*h_0,scale*w_0) and all other inputs will be upsampled to the"
     "same size. For bilinear upsampling this must be 2; 1 input and 1 weight.");
-    DMLC_DECLARE_FIELD(workspace).set_default(512).set_range(0, 8192)
+    DMLC_DECLARE_FIELD(workspace).set_default(1024).set_range(0, 8192)
     .describe("Tmp workspace for deconvolution (MB)");
   }
 };  // struct UpSamplingParam
